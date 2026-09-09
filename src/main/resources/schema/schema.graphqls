@@ -1,0 +1,61 @@
+scalar BigDecimal
+
+type Product {
+    id: ID!
+    name: String!
+    description: String
+    price: BigDecimal!
+}
+
+enum SortDirection {
+    ASC
+    DESC
+}
+
+enum ProductSortField {
+    ID
+    NAME
+    PRICE
+}
+
+type Query {
+    products(
+        page: Int = 1
+        size: Int = 10
+        name: String
+        minPrice: BigDecimal
+        maxPrice: BigDecimal
+        sortField: ProductSortField = ID
+        sortDirection: SortDirection = DESC
+    ): ProductPage!
+
+    productById(id: ID!): Product
+}
+
+type ProductPage {
+    content: [Product!]!
+    page: Int!
+    size: Int!
+    totalElements: Int!
+    totalPages: Int!
+    first: Boolean!
+    last: Boolean!
+}
+
+type Mutation {
+    createProduct(input: CreateProductInput!): Product!
+    updateProduct(id: ID!, input: UpdateProductInput!): Product!
+    deleteProduct(id: ID!): Boolean!
+}
+
+input CreateProductInput {
+    name: String!
+    description: String
+    price: BigDecimal!
+}
+
+input UpdateProductInput {
+    name: String!
+    description: String
+    price: BigDecimal!
+}
