@@ -11,13 +11,13 @@ import java.math.BigDecimal;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("""
-            SELECT p
+            SELECT new com.example.dgsproductapi.product.ProductResDTO(p.id, p.name, p.description, p.price)
             FROM Product p
             WHERE (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
               AND (:minPrice IS NULL OR p.price >= :minPrice)
               AND (:maxPrice IS NULL OR p.price <= :maxPrice)
             """)
-    Page<Product> getPaginatedList(
+    Page<ProductResDTO> getPaginatedList(
             @Param("name") String name,
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,

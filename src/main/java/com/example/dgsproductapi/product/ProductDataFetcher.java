@@ -1,16 +1,16 @@
 package com.example.dgsproductapi.product;
 
-
-import com.example.dgsproductapi.generated.types.*;
-
-import com.example.dgsproductapi.generated.types.Product;
+import com.example.dgsproductapi.generated.types.CreateProductInput;
+import com.example.dgsproductapi.generated.types.ProductPage;
+import com.example.dgsproductapi.generated.types.ProductSortField;
+import com.example.dgsproductapi.generated.types.SortDirection;
+import com.example.dgsproductapi.generated.types.UpdateProductInput;
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsMutation;
 import com.netflix.graphql.dgs.DgsQuery;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
-
 
 @DgsComponent
 @RequiredArgsConstructor
@@ -40,12 +40,7 @@ public class ProductDataFetcher {
         );
 
         return ProductPage.newBuilder()
-                .content(
-                        result.getContent()
-                                .stream()
-                                .map(this::toGraphQLProduct)
-                                .toList()
-                )
+                .content(result.getContent())
                 .page(result.getNumber() + 1)
                 .size(result.getSize())
                 .totalElements((int) result.getTotalElements())
@@ -56,58 +51,40 @@ public class ProductDataFetcher {
     }
 
     @DgsQuery
-    public Product productById(Long id) {
+    public ProductResDTO productById(Long id) {
 
-        return toGraphQLProduct(
-                productService.findById(id)
-        );
+        return productService.findById(id);
     }
 
     @DgsMutation
-    public Product createProduct(
+    public ProductResDTO createProduct(
             CreateProductInput input
     ) {
 
-        var product = productService.create(
+        return productService.create(
                 input.getName(),
                 input.getDescription(),
                 input.getPrice()
         );
-
-        return toGraphQLProduct(product);
     }
 
     @DgsMutation
-    public Product updateProduct(
+    public ProductResDTO updateProduct(
             Long id,
             UpdateProductInput input
     ) {
 
-        var product = productService.update(
+        return productService.update(
                 id,
                 input.getName(),
                 input.getDescription(),
                 input.getPrice()
         );
-
-        return toGraphQLProduct(product);
     }
 
     @DgsMutation
     public Boolean deleteProduct(Long id) {
 
         return productService.delete(id);
-    }
-
-    private Product toGraphQLProduct(
-            com.example.dgsproductapi.product.Product entity
-    ) {
-
-        return Product.newBuilder()
-                .id(entity.getId().toString())
-                .name(entity.getName())
-                .description(entity.getDescription())
-                .price(entity.getPrice())
-                .build();
     }
 }

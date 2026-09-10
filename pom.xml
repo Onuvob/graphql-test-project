@@ -121,6 +121,7 @@
 
 					<typeMapping>
 						<BigDecimal>java.math.BigDecimal</BigDecimal>
+						<Product>com.example.dgsproductapi.product.ProductResDTO</Product>
 					</typeMapping>
 
 					<schemaPaths>
